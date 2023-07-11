@@ -1,3 +1,3 @@
-module github.com/AntonyIS/k8-go-react-typscript-todo/backend
+module example.com/todo-be
 
 go 1.18

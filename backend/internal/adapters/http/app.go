@@ -3,14 +3,13 @@ package http
 import (
 	"fmt"
 
-	"github.com/AntonyIS/k8-go-react-typscript-todo/backend/config"
-	"github.com/AntonyIS/k8-go-react-typscript-todo/backend/core"
-	"github.com/AntonyIS/k8-go-react-typscript-todo/backend/internal/core"
+	"example.com/todo-be/core"
+	"example.com/todo-be/internal/core"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func InitHTTPRoutes(svc *core.HTTPHandlerService, c config.Config) {
+func InitHTTPRoutes(svc core.HTTPHandlerService) {
 	// Enable detailed error responses
 	gin.SetMode(gin.DebugMode)
 
@@ -37,7 +36,7 @@ func InitHTTPRoutes(svc *core.HTTPHandlerService, c config.Config) {
 		todoroutes.PUT("/:id", handler.PutUser)
 		todoroutes.DELETE("/:id", handler.DeleteUser)
 	}
-	port := fmt.Sprintf(":%s", c.Port)
+	port := fmt.Sprintf(":5000")
 
 	router.Run(port)
 }

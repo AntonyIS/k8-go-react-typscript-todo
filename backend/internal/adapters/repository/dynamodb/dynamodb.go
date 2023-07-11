@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/AntonyIS/k8-go-react-typscript-todo/backend/config"
-	"github.com/AntonyIS/k8-go-react-typscript-todo/backend/core/domain"
+	"example.com/todo-be/config"
+	"example.com/todo-be/core/domain"
+	"example.com/todo-be/internal/core"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -18,7 +19,7 @@ type TodoDynamoDBClient struct {
 	tablename string
 }
 
-func NewTodoDynamoDBClient(c config.Config) *TodoDynamoDBClient {
+func NewTodoDynamoDBClient(c config.Config) core.TodoRepository {
 	creds := credentials.NewStaticCredentials(c.AWSAccessKey, c.AWSAccessSecretKey, "")
 
 	sess := session.Must(session.NewSession(&aws.Config{
