@@ -3,7 +3,7 @@ package core
 import "github.com/gin-gonic/gin"
 
 type TodoService interface {
-	CreateTodo(todo Todo) (*Todo, error)
+	CreateTodo(todo *Todo) (*Todo, error)
 	ReadTodo(id string) (*Todo, error)
 	ReadTodos() (*[]Todo, error)
 	UpdateTodo(todo Todo) (*Todo, error)
@@ -11,7 +11,7 @@ type TodoService interface {
 }
 
 type TodoRepository interface {
-	CreateTodo(todo Todo) (*Todo, error)
+	CreateTodo(todo *Todo) (*Todo, error)
 	ReadTodo(id string) (*Todo, error)
 	ReadTodos() (*[]Todo, error)
 	UpdateTodo(todo *Todo) (*Todo, error)
