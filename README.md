@@ -9,6 +9,27 @@ This application is made up of three major parts.
 2. Frontend
 3. Kubernetes
 
+.
+├── backend
+│   ├── config
+│   │   └── config.go
+│   ├── go.mod
+│   ├── go.sum
+│   ├── internal
+│   │   ├── adapters
+│   │   │   ├── app
+│   │   │   │   └── app.go
+│   │   │   └── repository
+│   │   │       └── dynamodb
+│   │   │           └── dynamodb.go
+│   │   └── core
+│   │       ├── domain.go
+│   │       ├── ports.go
+│   │       └── services.go
+│   └── main.go
+├── frontend
+└── README.md
+
 ### Backend (Golang)
 The backend is build using Golang. Golang is my favorite programming language but can be replaced with python.
 This is a REST API, and I will use Gin for serving HTTP request.
