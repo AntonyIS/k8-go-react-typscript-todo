@@ -4,26 +4,6 @@ Why this languages? Well you might have guessed it. They all use types which red
 This is for learning purposes and therefore critics and comments are allowed :)
 
 ## Application architecure.
-├── backend
-│   ├── config
-│   │   └── config.go
-│   ├── go.mod
-│   ├── go.sum
-│   ├── internal
-│   │   ├── adapters
-│   │   │   ├── app
-│   │   │   │   └── app.go
-│   │   │   └── repository
-│   │   │       └── dynamodb
-│   │   │           └── dynamodb.go
-│   │   └── core
-│   │       ├── domain.go
-│   │       ├── ports.go
-│   │       └── services.go
-│   └── main.go
-├── frontend
-└── README.md
-
 
 This application is made up of three major parts.
 1. Backend
@@ -43,7 +23,7 @@ A todo items will have the below attributes.
 
 The backend will be created using the hexagonal architecture. Incase this is not farmiliar to you, kindly research about hexagonal architecture.
 
-### Frontend (React + Typscript)
+### Frontend (ReactJS + Typscript)
 The frontend is build using ReactJS. Its is my favorite frontend framework at the moment.
 The frontend will make HTTP requests to the backend to perform CRUD operation
 
