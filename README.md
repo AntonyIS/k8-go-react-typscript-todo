@@ -4,12 +4,6 @@ Why this languages? Well you might have guessed it. They all use types which red
 This is for learning purposes and therefore critics and comments are allowed :)
 
 ## Application architecure.
-This application is made up of three major parts.
-1. Backend
-2. Frontend
-3. Kubernetes
-
-.
 ├── backend
 │   ├── config
 │   │   └── config.go
@@ -29,6 +23,12 @@ This application is made up of three major parts.
 │   └── main.go
 ├── frontend
 └── README.md
+
+
+This application is made up of three major parts.
+1. Backend
+2. Frontend
+3. Kubernetes
 
 ### Backend (Golang)
 The backend is build using Golang. Golang is my favorite programming language but can be replaced with python.
