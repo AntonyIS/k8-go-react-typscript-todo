@@ -22,7 +22,7 @@ func (t *TodoApplicationService) CreateTodo(todo *Todo) (*Todo, error) {
 		This method will add an ID and created at attribute values
 		Returns the todo item after successful creation , else returns an error
 	*/
-	return t.repo.CreateTodo(*todo)
+	return t.repo.CreateTodo(todo)
 }
 
 func (t *TodoApplicationService) ReadTodo(id string) (*Todo, error) {
@@ -58,10 +58,10 @@ func (t *TodoApplicationService) DeleteTodo(id string) error {
 }
 
 type HTTPHandlerService struct {
-	svc *TodoApplicationService
+	svc TodoApplicationService
 }
 
-func NewHTTPService(svc *TodoApplicationService) HTTPHandler {
+func NewHTTPService(svc TodoApplicationService) HTTPHandler {
 	return HTTPHandlerService{
 		svc: svc,
 	}
@@ -106,6 +106,7 @@ func (h HTTPHandlerService) GetTodo(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 	return
 }
+
 func (h HTTPHandlerService) GetTodos(ctx *gin.Context) {
 	users, err := h.svc.ReadTodos()
 	if err != nil {
@@ -137,6 +138,7 @@ func (h HTTPHandlerService) UpdateTodo(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, res)
 	return
 }
+
 func (h HTTPHandlerService) DeleteTodo(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := h.svc.DeleteTodo(id)

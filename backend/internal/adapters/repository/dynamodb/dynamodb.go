@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"example.com/todo-be/config"
-	"example.com/todo-be/core/domain"
 	"example.com/todo-be/internal/core"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 )
 
 type TodoDynamoDBClient struct {
@@ -32,7 +32,7 @@ func NewTodoDynamoDBClient(c config.Config) core.TodoRepository {
 	}
 }
 
-func (t *TodoDynamoDBClient) CreateTodo(todo *domain.Todo) (*domain.Todo, error) {
+func (t *TodoDynamoDBClient) CreateTodo(todo *core.Todo) (*core.Todo, error) {
 	// Convert todo to a dynamodb attributes
 	entityParsed, err := dynamodbattribute.MarshalMap(todo)
 	if err != nil {
@@ -45,7 +45,7 @@ func (t *TodoDynamoDBClient) CreateTodo(todo *domain.Todo) (*domain.Todo, error)
 		TableName: aws.String(t.tablename),
 	}
 	// Add todo into the database
-	_, err = t.db.client.PutItem(input)
+	_, err = t.db.PutItem(input)
 
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (t *TodoDynamoDBClient) CreateTodo(todo *domain.Todo) (*domain.Todo, error)
 
 }
 
-func (t *TodoDynamoDBClient) ReadTodo(id string) (*domain.Todo, error) {
+func (t *TodoDynamoDBClient) ReadTodo(id string) (*core.Todo, error) {
 	// Read todo from the database with id
 	result, err := t.db.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(t.tablename),
@@ -74,7 +74,7 @@ func (t *TodoDynamoDBClient) ReadTodo(id string) (*domain.Todo, error) {
 		return nil, errors.New(fmt.Sprintf("todo with id %s not found", id))
 	}
 	// Initialize todo type
-	var todo *domain.Todo
+	var todo *core.Todo
 	// Convert todo to todo type from dynamodb type
 	err = dynamodbattribute.UnmarshalMap(result.Item, todo)
 	if err != nil {
@@ -85,34 +85,49 @@ func (t *TodoDynamoDBClient) ReadTodo(id string) (*domain.Todo, error) {
 
 }
 
-func (t *TodoDynamoDBClient) ReadTodos() (*[]domain.Todo, error) {
-	// Create the input parameters for the Scan operation
-	params := &dynamodb.ScanInput{
-		TableName: aws.String(t.tablename), // Replace with your table name
-	}
-	// Perform the Scan operation
-	result, err := t.db.Scan(params)
+func (t *TodoDynamoDBClient) ReadTodos() (*[]core.Todo, error) {
+	todos := []core.Todo{}
+	filt := expression.Name("Id").AttributeNotExists()
+	proj := expression.NamesList(
+		expression.Name("id"),
+		expression.Name("title"),
+		expression.Name("description"),
+		expression.Name("state"),
+		expression.Name("createdAt"),
+	)
+	expr, err := expression.NewBuilder().WithFilter(filt).WithProjection(proj).Build()
+
 	if err != nil {
 		return nil, err
 	}
-	var todos *[]domain.Todo
-	// Process the scan results
-	for _, item := range result.Items {
-		// create todo instance
-		var todo = *domain.Todo{}
-		todo.id = item["Id"]
-		todo.title = item["title"]
-		todo.description = item["description"]
-		todo.State = item["State"]
-		todo.createdAt = item["createdAt"]
+	params := &dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(t.tablename),
+	}
+	result, err := t.db.Scan(params)
 
-		// add todo to todos list
-		todo = append(todos, todo)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, item := range result.Items {
+		var todo core.Todo
+
+		err = dynamodbattribute.UnmarshalMap(item, &todo)
+		if err != nil {
+			return nil, err
+		}
+
+		todos = append(todos, todo)
+
 	}
 	return &todos, nil
 }
 
-func (t *TodoDynamoDBClient) UpdateTodo(todo *domain.Todo) (*domain.Todo, error) {
+func (t *TodoDynamoDBClient) UpdateTodo(todo *core.Todo) (*core.Todo, error) {
 	// marshal todo to dynamodb attributes
 	entityParsed, err := dynamodbattribute.MarshalMap(todo)
 	if err != nil {
@@ -139,7 +154,7 @@ func (t *TodoDynamoDBClient) DeleteTodo(id string) error {
 				S: aws.String(id),
 			},
 		},
-		TableName: aws.String(t.db.tablename),
+		TableName: aws.String(t.tablename),
 	}
 
 	res, err := t.db.DeleteItem(input)

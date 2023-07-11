@@ -2,7 +2,7 @@ package main
 
 import (
 	"example.com/todo-be/config"
-	"example.com/todo-be/internal/adapters/http"
+	"example.com/todo-be/internal/adapters/app"
 	"example.com/todo-be/internal/adapters/repository/dynamodb"
 	"example.com/todo-be/internal/core"
 )
@@ -20,6 +20,6 @@ func main() {
 	// Application/Todo service
 	svc := core.NewTodoService(&rep)
 	// Application HTTP service
-	http.InitHTTPRoutes(svc)
+	app.InitHTTPRoutes(*svc)
 
 }
