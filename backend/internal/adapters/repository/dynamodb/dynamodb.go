@@ -20,10 +20,10 @@ type TodoDynamoDBClient struct {
 }
 
 func NewTodoDynamoDBClient(c config.Config) core.TodoRepository {
-	creds := credentials.NewStaticCredentials(c.AWSAccessKey, c.AWSAccessSecretKey, "")
+	creds := credentials.NewStaticCredentials(c.AWS_ACCESS_KEY_ID, c.AWS_ACCESS_SECRET_KEY, "")
 
 	sess := session.Must(session.NewSession(&aws.Config{
-		Region:      aws.String(c.AWSRegion),
+		Region:      aws.String(c.AWS_DEFAULT_REGION),
 		Credentials: creds,
 	}))
 	return &TodoDynamoDBClient{
@@ -93,7 +93,6 @@ func (t *TodoDynamoDBClient) ReadTodos() (*[]core.Todo, error) {
 		expression.Name("title"),
 		expression.Name("description"),
 		expression.Name("state"),
-		expression.Name("createdAt"),
 	)
 	expr, err := expression.NewBuilder().WithFilter(filt).WithProjection(proj).Build()
 

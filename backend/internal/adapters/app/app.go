@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitHTTPRoutes(svc core.TodoApplicationService) {
+func InitHTTPRoutes(svc core.TodoApplicationService, port string) {
 	// Enable detailed error responses
 	gin.SetMode(gin.DebugMode)
 
@@ -35,7 +35,7 @@ func InitHTTPRoutes(svc core.TodoApplicationService) {
 		todoroutes.PUT("/:id", handler.UpdateTodo)
 		todoroutes.DELETE("/:id", handler.DeleteTodo)
 	}
-	port := fmt.Sprintf(":5000")
+	port = fmt.Sprintf(":%s", port)
 
 	router.Run(port)
 }

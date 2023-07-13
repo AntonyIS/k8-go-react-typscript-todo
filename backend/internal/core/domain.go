@@ -1,9 +1,8 @@
 package core
 
 type Todo struct {
-	Id          string
-	Title       string
-	Description string
-	State       string
-	Created     int64
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	State       string `json:"state"`
 }

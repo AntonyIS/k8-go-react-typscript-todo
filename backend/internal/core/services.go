@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type TodoApplicationService struct {
@@ -22,6 +23,8 @@ func (t *TodoApplicationService) CreateTodo(todo *Todo) (*Todo, error) {
 		This method will add an ID and created at attribute values
 		Returns the todo item after successful creation , else returns an error
 	*/
+	todo.Id = uuid.New().String()
+	todo.State = "Not Done"
 	return t.repo.CreateTodo(todo)
 }
 
